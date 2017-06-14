@@ -22,6 +22,24 @@
 %token THEN
 %token DIGIT
 %token STRING
+
+struct triple
+{
+	int n;
+	ast_node C;
+	char* s;
+};
+struct ast_node
+{
+	
+};
+
+void execute(triple L)
+{
+
+}
+
+
 %%
 
 program	: line
@@ -34,21 +52,23 @@ line	: LINENUM command '\n'
 command : REM STRING			{printf("This is comment\n");}	
 	| GOTO INTEGER			{printf("goto statement number  %d", yylval);}
 	| LET VAR '=' expr		{printf("this is assginment statemnt\n");}
+	| LET VAR '[' expr ']''[' expr ']' '=' expr	{printf("this is also assignment\n");}
+	| DIM VAR AS '[' expr ']''[' expr ']'		
 	| LET VAR '[' expr ']' '=' expr	{printf("this is also assignment\n");}
-	| DIM VAR AS '[' expr ']'
+	| DIM VAR AS '[' expr ']'	
 	| PRINT expr
 	| INPUT VAR
 	| IF expr THEN INTEGER
 	;
 
-expr	: VAR
-	| expr PLUS term
+expr	: expr PLUS term	
 	| expr MINUS term
+	| VAR
 	| term
 	;
 
 term	: term DIVIDE factor
-	| term MULTI  factor
+	| term MULTI factor
 	| factor
 	;
 
