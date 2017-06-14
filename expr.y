@@ -3,103 +3,78 @@
 #include <stdio.h>
 %}
 
-%token COMMENT
 %token LINENUM
 %token REM
 %token GOTO
 %token LET
-
 %token DIM
 %token AS
-
 %token PRINT
 %token INPUT
-
 %token VAR
-
 %token PLUS
 %token MINUS
 %token MODULO
 %token MULTI
 %token DIVIDE
-%token GREATER
-%token SMALLER
-%token GREATEQUAL
-%token SMALLEQUAL
-%token INEQUAL
-%token EQUAL
-%token AND
-%token OR
-
-%token NEGATION
-
+%token UNARY_OP
 %token IF
 %token THEN
-%token ENDIF
-%token ELSEIF
-%token ELSE
-
 %token DIGIT
 %token STRING
 
+struct triple
+{
+	int n;
+	ast_node C;
+	char* s;
+};
+struct ast_node
+{
+	
+};
+
+void execute(triple L)
+{
+
+}
+
 
 %%
-
 
 program	: line
 	| line program
 	; 
 
-line	: LINENUM command '\n'		{printf("one line\n");}
-	| '\n'
+line	: LINENUM command '\n'
 	;
 
-command : REM COMMENT			{printf("This is comment\n");}	
+command : REM STRING			{printf("This is comment\n");}	
 	| GOTO INTEGER			{printf("goto statement number  %d", yylval);}
-	| LET VAR EQUAL expr		{printf("this is assginment statemnt\n");}
-	| LET VAR '[' expr ']' EQUAL expr	{printf("2d array statment\n");}
-	| DIM VAR AS '[' expr ']'	{printf("2d array change statement\n");}
-	| PRINT expr			{printf("print command\n");}
-	| INPUT VAR			{printf("input variable\n");}
-	| ifstmt			{printf("if statement \n");}
+	| LET VAR '=' expr		{printf("this is assginment statemnt\n");}
+	| LET VAR '[' expr ']''[' expr ']' '=' expr	{printf("this is also assignment\n");}
+	| DIM VAR AS '[' expr ']''[' expr ']'		
+	| LET VAR '[' expr ']' '=' expr	{printf("this is also assignment\n");}
+	| DIM VAR AS '[' expr ']'	
+	| PRINT expr
+	| INPUT VAR
+	| IF expr THEN INTEGER
 	;
 
-ifstmt	: IF expr THEN INTEGER		{printf("if then integer\n");}
-	| IF expr THEN			{printf("if then \n");}
-	| ELSEIF expr THEN INTEGER	{printf("elseif then integer\n");}
-	| ELSEIF expr THEN		{printf("elseif then\n");}
-	| ELSE INTEGER			{printf("else integer\n");}
-	| ELSE 				{printf("else\n");}
-	| ENDIF				{printf("end if\n");}
-	;	
-
-
-
-
-expr	: STRING			{printf("string bison\n");}
-	| expr PLUS term		{printf("+ bison\n");}
-	| expr MINUS term		{printf("- bison \n");}
-	| expr GREATER term		{printf(" > bison \n");}
-	| expr SMALLER term		{printf(" < bison \n");}
-	| expr GREATEQUAL term		{printf(" >= bison \n");}
-	| expr SMALLEQUAL term		{printf(" <= bison \n");}
-	| expr EQUAL term		{printf(" = bison \n");}
-	| expr INEQUAL term		{printf(" <> bison \n");}
-	| expr OR term			{printf("or\n");}
-	| expr AND term			{printf("and\n");}
+expr	: expr PLUS term	
+	| expr MINUS term
+	| VAR
 	| term
 	;
 
 term	: term DIVIDE factor
-	| term MULTI  factor
+	| term MULTI factor
 	| factor
 	;
 
 factor	: '(' expr ')'
 	| INTEGER
-	| MINUS factor
-	| NEGATION factor
-	| VAR				{printf("variable factor\n");}
+	| UNARY_OP factor
 	;
 
 INTEGER : INTEGER DIGIT
